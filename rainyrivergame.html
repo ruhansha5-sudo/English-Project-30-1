@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The River Between Shame and Self</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(#0b1320, #1d2d44);
+      font-family: Georgia, serif;
+      padding: 30px;
+      min-height: 100vh;
+    }
+    #game {
+      max-width: 850px;
+      margin: auto;
+      background: rgba(0,0,0,0.65);
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 0 25px black;
+      color: white;
+      text-align: center;
+    }
+    h1 { color: #d9e6f2; margin-bottom: 10px; }
+    .scene { display: none; flex-direction: column; align-items: center; }
+    .scene.on { display: flex; }
+    .dots { display: flex; gap: 7px; justify-content: center; margin-bottom: 18px; margin-top: 10px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+    .dot.a { background: #7aafcf; }
+    h2 { font-size: 20px; font-weight: 500; color: #d9e6f2; margin-bottom: 4px; }
+    .sym { font-style: italic; color: #a8dadc; font-size: 14px; margin-bottom: 14px; }
+    p.txt { font-size: 17px; line-height: 1.7; color: #e0eaf2; max-width: 600px; margin-bottom: 18px; }
+    canvas { border-radius: 8px; display: block; max-width: 100%; }
+    .btn {
+      background: #3d5a80;
+      border: none;
+      color: white;
+      border-radius: 12px;
+      padding: 13px 32px;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 6px;
+      font-family: Georgia, serif;
+    }
+    .btn:hover { background: #5f84b2; }
+    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+    .hint { color: #7aafcf; font-size: 13px; margin-top: 8px; font-style: italic; }
+    .letter {
+      background: #f5f0e0;
+      color: #2a1a0e;
+      border-radius: 6px;
+      padding: 20px 24px;
+      width: 260px;
+      font-size: 14px;
+      line-height: 1.8;
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .letter strong { display: block; text-align: center; margin-bottom: 10px; font-size: 15px; }
+  </style>
+</head>
+<body>
+<div id="game">
+  <h1>On the Rainy River</h1>
+
+  <div class="scene on" id="s1">
+    <div class="dots"><div class="dot a"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <h2>The Draft Notice</h2>
+    <div class="sym">A letter that carries the weight of a whole society</div>
+    <div class="letter">
+      <strong>Conviction Notice</strong>
+      You are hereby ordered to report for war under the Armed Forces of the United States.<br><br>
+    </div>
+    <p class="txt">Tim stares at the paper. He believes the war is wrong. But the whole town, his family, his country, is watching him.</p>
+    <button class="btn" onclick="go(2)">Continue</button>
+  </div>
+
+  <div class="scene" id="s2">
+    <div class="dots"><div class="dot"></div><div class="dot a"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <h2>The Meatpacking Plant</h2>
+    <div class="sym">A mirror of the war waiting for him</div>
+    <canvas id="c-plant" width="500" height="120" style="margin-bottom:16px"></canvas>
+    <p class="txt">Working in the factory, Tim feels it. The noise. Something in him compelled him to make a decision; he will go north. To Canada.</p>
+    <button class="btn" onclick="go(3)">Get in the car</button>
+  </div>
+
+  <div class="scene" id="s3">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot a"></div><div class="dot"></div><div class="dot"></div></div>
+    <h2>Driving North</h2>
+    <div class="sym">Every mile north is a mile from his old self.</div>
+    <p class="txt" style="margin-bottom:12px">Tim gets in his car and drives.</p>
+    <canvas id="c-road" width="560" height="150" style="margin-bottom:14px"></canvas>
+    <button class="btn" id="drive-btn" onclick="startDrive()">Start driving</button>
+  </div>
+
+  <div class="scene" id="s4">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot a"></div><div class="dot"></div></div>
+    <h2>Elroy Berdahl</h2>
+    <div class="sym">The old man never chooses to speak.</div>
+    <svg width="260" height="140" viewBox="0 0 260 140" style="margin-bottom:14px">
+      <rect x="55" y="50" width="150" height="80" rx="3" fill="#5a3a20"/>
+      <polygon points="38,50 130,12 222,50" fill="#7a4a20"/>
+      <rect x="100" y="88" width="38" height="42" rx="2" fill="#3a2010"/>
+      <rect x="65" y="63" width="32" height="26" rx="2" fill="#c9a96e"/>
+      <rect x="163" y="63" width="32" height="26" rx="2" fill="#c9a96e"/>
+      <rect x="0" y="132" width="260" height="8" fill="#2d5016"/>
+      <circle cx="210" cy="118" r="8" fill="#3d6030"/>
+      <circle cx="226" cy="112" r="6" fill="#4a7040"/>
+    </svg>
+    <p class="txt">Elroy says almost nothing. In the silence, Tim has nowhere to hide from himself.</p>
+    <button class="btn" onclick="go(5)">Go to the river</button>
+  </div>
+
+  <div class="scene" id="s5">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot a"></div></div>
+    <h2>The Rainy River</h2>
+    <div class="sym">Drag the boat. Canada or go back home?</div>
+    <canvas id="c-river" width="560" height="200" style="margin-bottom:6px;cursor:grab;max-width:100%"></canvas>
+    <p class="hint" id="river-hint">Drag the boat left toward Canada, or right toward home</p>
+  </div>
+
+  <div class="scene" id="s6">
+    <h2 id="end-title"></h2>
+    <div class="sym" id="end-sym"></div>
+    <canvas id="c-end" width="500" height="90" style="margin-bottom:16px;border-radius:8px"></canvas>
+    <p class="txt" id="end-txt" style="max-width:500px"></p>
+    <p style="font-size:13px;color:#a8dadc;font-style:italic;margin-top:6px">Theme: Shame vs Personal Convictions</p>
+  </div>
+
+</div>
+<script>
+let cur = 1;
+
+function go(n) {
+  document.getElementById('s' + cur).classList.remove('on');
+  cur = n;
+  document.getElementById('s' + n).classList.add('on');
+  if (n === 2) drawPlant();
+  if (n === 3) drawRoadStatic();
+  if (n === 5) initRiver();
+}
+
+function drawPlant() {
+  const cv = document.getElementById('c-plant');
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#1a0e0a';
+  ctx.fillRect(0, 0, 500, 120);
+  for (let i = 0; i < 7; i++) {
+    const x = 10 + i * 70;
+    ctx.fillStyle = '#2c1810';
+    ctx.fillRect(x, 18, 52, 82);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(x + 6, 26, 40, 16);
+    ctx.fillStyle = 'rgba(140,30,20,0.5)';
+    ctx.beginPath();
+    ctx.arc(x + 26, 34, 10, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(70,10,10,0.45)';
+  ctx.fillRect(0, 88, 500, 32);
+  for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = '#7a1515';
+    ctx.beginPath();
+    ctx.arc(36 + i * 80, 108, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawRoadFrame(ctx, dashOff, carX) {
+  ctx.fillStyle = '#121212';
+  ctx.fillRect(0, 0, 560, 150);
+
+  // simple ground and road
+  ctx.fillStyle = '#1d3a24';
+  ctx.fillRect(0, 0, 560, 55);
+  ctx.fillStyle = '#2a2a2a';
+  ctx.fillRect(0, 55, 560, 80);
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 135, 560, 15);
+
+  // simple moving yellow road line
+  ctx.strokeStyle = '#e6c14a';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([30, 22]);
+  ctx.lineDashOffset = -dashOff * 2;
+  ctx.beginPath();
+  ctx.moveTo(0, 98);
+  ctx.lineTo(560, 98);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // simple car
+  ctx.fillStyle = '#b83b30';
+  ctx.fillRect(carX, 78, 70, 32);
+  ctx.fillStyle = '#87b6cc';
+  ctx.fillRect(carX + 12, 84, 18, 10);
+  ctx.fillRect(carX + 42, 84, 18, 10);
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(carX + 14, 112, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(carX + 56, 112, 7, 0, Math.PI * 2); ctx.fill();
+}
+
+function drawRoadStatic() {
+  const ctx = document.getElementById('c-road').getContext('2d');
+  drawRoadFrame(ctx, 0, 80);
+}
+
+let driveRunning = false;
+function startDrive() {
+  if (driveRunning) return;
+  driveRunning = true;
+  const btn = document.getElementById('drive-btn');
+  btn.disabled = true; btn.textContent = 'Driving...';
+  const ctx = document.getElementById('c-road').getContext('2d');
+  let off = 0, carX = 80, prog = 0;
+  function frame() {
+    if (cur !== 3) return;
+    off += 2.5; prog++;
+    carX = Math.min(carX + 0.2, 150);
+    drawRoadFrame(ctx, off, carX);
+    if (prog < 300) {
+      requestAnimationFrame(frame);
+    } else {
+      btn.textContent = 'Arrive at the lodge';
+      btn.disabled = false;
+      btn.onclick = function() { go(4); };
+    }
+  }
+  frame();
+}
+
+let riverCtx, boatX = 280, dragging = false, dragOx = 0, boatOx = 280, wt = 0;
+
+function initRiver() {
+  const cv = document.getElementById('c-river');
+  riverCtx = cv.getContext('2d');
+  boatX = 280; dragging = false; wt = 0;
+  cv.onmousedown = function(e) { const r = cv.getBoundingClientRect(); rDown((e.clientX - r.left) * cv.width / r.width); };
+  cv.onmousemove = function(e) { const r = cv.getBoundingClientRect(); rMove((e.clientX - r.left) * cv.width / r.width); };
+  cv.onmouseup = function() { dragging = false; };
+  cv.ontouchstart = function(e) { e.preventDefault(); const r = cv.getBoundingClientRect(); rDown((e.touches[0].clientX - r.left) * cv.width / r.width); };
+  cv.ontouchmove = function(e) { e.preventDefault(); const r = cv.getBoundingClientRect(); rMove((e.touches[0].clientX - r.left) * cv.width / r.width); };
+  cv.ontouchend = function() { dragging = false; };
+  function loop() {
+    if (cur !== 5) return;
+    wt += 0.7;
+    drawRiver();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function rDown(mx) {
+  if (Math.abs(mx - boatX) < 55) { dragging = true; dragOx = mx; boatOx = boatX; }
+}
+
+function rMove(mx) {
+  if (!dragging) return;
+  boatX = Math.max(65, Math.min(495, boatOx + (mx - dragOx)));
+  if (boatX < 95) resolve('canada');
+  else if (boatX > 465) resolve('home');
+}
+
+function drawRiver() {
+  const ctx = riverCtx, W = 560, H = 200;
+  ctx.fillStyle = '#0d2233';
+  ctx.fillRect(0, 0, W, H);
+
+  // simple river lines
+  ctx.strokeStyle = 'rgba(120,180,215,0.35)';
+  ctx.lineWidth = 2;
+  for (let r = 0; r < 5; r++) {
+    const y = 30 + r * 30;
+    ctx.beginPath();
+    ctx.moveTo(70, y);
+    ctx.lineTo(490, y + Math.sin(wt * 0.05 + r) * 4);
+    ctx.stroke();
+  }
+
+  // simple shores
+  ctx.fillStyle = '#1a3d28';
+  ctx.fillRect(0, 0, 65, H);
+  ctx.fillStyle = '#3a1010';
+  ctx.fillRect(495, 0, 65, H);
+  ctx.fillStyle = '#d9f0de';
+  ctx.font = 'bold 12px Georgia,serif';
+  ctx.fillText('CANADA', 8, H - 12);
+  ctx.fillStyle = '#f0c8c8';
+  ctx.textAlign = 'right';
+  ctx.fillText('HOME', 552, H - 12);
+  ctx.textAlign = 'left';
+
+  // simple boat and person
+  ctx.save();
+  ctx.translate(boatX, 135);
+  ctx.fillStyle = '#8B5E3C';
+  ctx.beginPath();
+  ctx.moveTo(-28, 8);
+  ctx.lineTo(28, 8);
+  ctx.lineTo(20, -6);
+  ctx.lineTo(-20, -6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#c9a070';
+  ctx.beginPath();
+  ctx.arc(0, -16, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#6a4a30';
+  ctx.fillRect(-2, -8, 4, 18);
+  ctx.restore();
+
+  if (boatX < 200 || boatX > 360) {
+    ctx.fillStyle = boatX < 200 ? '#7aafcf' : '#cf9a7a';
+    ctx.font = '13px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(boatX < 200 ? 'Toward Canada...' : 'Back toward home...', 280, 188);
+    ctx.textAlign = 'left';
+  }
+}
+
+let resolved = false;
+function resolve(choice) {
+  if (resolved) return;
+  resolved = true;
+  const hint = document.getElementById('river-hint');
+  hint.textContent = choice === 'canada' ? 'He reaches for Canada...' : 'He turns back home...';
+  hint.style.color = choice === 'canada' ? '#7aafcf' : '#cf9a7a';
+  setTimeout(function() { showEnd(choice); }, 1100);
+}
+
+function showEnd(choice) {
+  go(6);
+  const cv = document.getElementById('c-end');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, 500, 90);
+
+  if (choice === 'canada') {
+    // simple winning screen: no mountains, no dots
+    ctx.fillStyle = '#102c2d';
+    ctx.fillRect(0, 0, 500, 90);
+    ctx.fillStyle = '#7aafcf';
+    ctx.font = 'italic 17px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('He crossed. He was free.', 250, 38);
+    ctx.fillStyle = 'rgba(230,240,245,0.75)';
+    ctx.font = '13px Georgia,serif';
+    ctx.fillText('But the shame followed him anyway.', 250, 61);
+
+    document.getElementById('end-title').textContent = 'Tim chooses Canada';
+    document.getElementById('end-title').style.color = '#7aafcf';
+    document.getElementById('end-sym').textContent = 'He follows his "conscience", but still carries guilt';
+    document.getElementById('end-txt').textContent = 'Tim escapes the war. He is free, but he still has to live with the feeling that he left everything behind.';
+  } else {
+    // simple ending screen: no polka dots
+    ctx.fillStyle = '#2a1010';
+    ctx.fillRect(0, 0, 500, 90);
+    ctx.fillStyle = '#cf9a7a';
+    ctx.font = 'italic 17px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('He went to the war.', 250, 38);
+    ctx.fillStyle = 'rgba(230,210,200,0.75)';
+    ctx.font = '13px Georgia,serif';
+    ctx.fillText('Not from courage. From shame.', 250, 61);
+
+    document.getElementById('end-title').textContent = 'Tim returns home';
+    document.getElementById('end-title').style.color = '#cf9a7a';
+    document.getElementById('end-sym').textContent = 'Society speaks louder than his own voice';
+    document.getElementById('end-txt').textContent = 'He goes to war because he is afraid of being judged. Shame becomes stronger than what he believes is right.';
+  }
+}
+</script>
+</body>
+</html>
